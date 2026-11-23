@@ -66,6 +66,14 @@ export const daysInMonth = (key: DateKey): number => {
   return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
 };
 
+// get today
+export const getToday = (): DateKey => toDateKey(new Date());
+// full week in date key form
+export const getWeekKeys = (key: DateKey): DateKey[] => {
+  const offset = (getWeekDay(key) + 6) % 7; // this calculates what day of the week it is and how far it is from the first day of the week(in this case monday rather than sunday)
+  const monday = addDays(key, -offset); //subtract the offset from the day
+  return Array.from({ length: 7 }, (_, i) => addDays(monday, i)); //loop through 0 to 7 and store the days into an array then return...this is the week
+};
 export const dayHasTask = (task: Task, date: DateKey): boolean => {
   return showTask(task, date);
 };
