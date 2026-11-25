@@ -1,0 +1,166 @@
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+button,
+input,
+li,
+a {
+  font-size: inherit;
+  border: none;
+}
+
+html {
+  font-size: 16px;
+}
+
+body {
+  height: 100dvh;
+}
+
+.home {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 100vh;
+  position: relative;
+  z-index: 0;
+
+  /* button to control the sidebar on mobile devices */
+  .tray-controller {
+    width: 70px;
+    height: 70px;
+    border-radius: 100%;
+    position: absolute;
+    bottom: 10%;
+    left: 2.5%;
+    z-index: 10000;
+
+    @media screen and (min-width: 768px) {
+      display: none;
+    }
+  }
+
+  .no-show {
+    z-index: 0;
+  }
+  aside {
+    flex-grow: 0;
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+    background-color: lightgray;
+    display: flex;
+    flex-direction: column;
+    padding: 1rem 0.8rem;
+    transition: 0.3s ease-in; /*slightly slower animation*/
+    z-index: 1;
+
+    button {
+      padding: 0.8em;
+    }
+    .filters {
+      width: 100%;
+      gap: 0.7em;
+      .filter {
+        padding: 1em 12px;
+        border-radius: 0.4em;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: 0.15s ease-in;
+
+        span {
+          font-weight: 500;
+        }
+        .ico {
+          height: 35px;
+          border-radius: 100%;
+          align-items: center;
+          justify-content: center;
+          display: none;
+        }
+        #number {
+          font-size: 14px;
+          font-weight: 400;
+
+          @media screen and (max-width: 767px) {
+            display: none;
+          }
+        }
+
+        &:hover {
+          background-color: wheat;
+        }
+      }
+    }
+    @media screen and (min-width: 800px) {
+      width: 250px;
+      z-index: inherit;
+    }
+
+    @media screen and (max-width: 768px) {
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+  }
+
+  .close {
+    width: 95px;
+    transition: 0.2s ease-out;
+    align-items: center;
+
+    .filters {
+      .filter {
+        align-items: center;
+        justify-content: center;
+        .show {
+          display: flex;
+          width: 80%;
+        }
+      }
+    }
+
+    #name {
+      display: none;
+    }
+
+    #number {
+      display: none;
+    }
+    button {
+      border-radius: 100%;
+      width: 45px;
+      height: 45px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    @media screen and (max-width: 799px) {
+      width: 0px;
+      display: none;
+    }
+  }
+}
+
+#controls-schedule {
+  min-width: 200px;
+  margin: 0px 10px;
+  padding: 3.5px 10px;
+  font-size: 1em;
+  border: 0.6px solid gray;
+
+  &:focus {
+    outline: 1px solid black;
+    border-radius: 5px;
+  }
+}
+
+.task-id {
+  font-weight: 600;
+  font-size: 1.2em;
+  color: white;
+}

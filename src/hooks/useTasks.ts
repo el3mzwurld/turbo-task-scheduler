@@ -17,7 +17,7 @@ import {
 } from "../lib/validateTask";
 import { normalizeTaskInput } from "../lib/normalizeTask";
 
-const STORAGE_KEY = "tempo:v1";
+const STORAGE_KEY = "tempo.v1";
 
 export interface TaskState {
   tasks: Task[];

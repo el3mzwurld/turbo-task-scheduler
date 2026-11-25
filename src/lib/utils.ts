@@ -49,7 +49,18 @@ export const fromDateKey = (d: DateKey): Date => {
 
   return new Date(year, month - 1, day);
 };
+export const formatDate = (d: DateKey, mode: "short" | "long"): string => {
+  const [year, month, day] = d.split("-").map(Number);
+  const date = fromDateKey(d);
+  const weekday = new Intl.DateTimeFormat("en-GB", { weekday: mode }).format(
+    date,
+  );
+  const monthName = new Intl.DateTimeFormat("en-GB", { month: mode })
+    .format(date)
+    .toLowerCase();
 
+  return `${weekday}, ${day} ${monthName.charAt(0).toUpperCase() + monthName.slice(1)}`;
+};
 // create schedule multiplier
 export const addDays = (key: DateKey, n: number): DateKey => {
   const d = fromDateKey(key);
@@ -74,8 +85,8 @@ export const getWeekKeys = (key: DateKey): DateKey[] => {
   const monday = addDays(key, -offset); //subtract the offset from the day
   return Array.from({ length: 7 }, (_, i) => addDays(monday, i)); //loop through 0 to 7 and store the days into an array then return...this is the week
 };
-export const dayHasTask = (task: Task, date: DateKey): boolean => {
-  return showTask(task, date);
+export const dayHasTask = (tasks: Task[], date: DateKey): boolean => {
+  return tasks.some((t) => showTask(t, date));
 };
 
 export const getInstances = (
@@ -101,4 +112,55 @@ export const getInstances = (
     (a, b) =>
       a.date.localeCompare(b.date) || a.task.time.localeCompare(b.task.time),
   ); //sort by date
+};
+
+export const getNextRuns = (
+  task: Task,
+  taskRecords: Map<string, InstanceRecord>,
+): Partial<Task>[] => {
+  /**
+   * the aim of this helper is to check for and return the next few possible runs of a specific task
+   * Flow :
+   * check for draft
+   * Retrieve task id
+   * check task repeat type, if it's once...return []
+   * if it isn't once...check for the instances where the date is greater than today and the end date hasn't passed i.e greater than today
+   * if nothing was found? return empty else...add partial tasks into the array
+   */
+
+  const nextRuns: Partial<Task>[] = [];
+
+  // draft and repeat check
+  if (task.status === "draft" || task.repeat === "once") return [];
+  // get task id
+  const id = task.id;
+
+  // task repeat type isn't once....check records for where the date is greater than today
+  taskRecords.forEach((value) => {
+    const hasRun = id === value.taskId; //check each record and discern if they belong to that task
+
+    if (!hasRun) return;
+
+    // handle edge case where task might be infinite...so just push a partial record into the nextRuns array
+    if (!task.endDate) {
+      if (fromDateKey(task.startDate) < fromDateKey(value.date)) {
+        const t: Partial<Task> = { startDate: value.date, time: task.time };
+        nextRuns.push(t);
+        return;
+      } else {
+        return;
+      }
+    }
+
+    // task has endDate...handle
+    if (
+      fromDateKey(task.startDate) < fromDateKey(value.date) &&
+      fromDateKey(task.endDate) > fromDateKey(value.date)
+    ) {
+      const t: Partial<Task> = { startDate: value.date, time: task.time };
+      nextRuns.push(t);
+      return;
+    }
+  });
+  return nextRuns;
 };
