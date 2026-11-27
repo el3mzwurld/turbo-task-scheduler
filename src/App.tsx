@@ -4,8 +4,11 @@ import { Sidebar } from "./components/ui/Sidebar";
 import { ListFilterPlus } from "lucide-react";
 import { Container } from "./components/ui/Container";
 import { DefaultState } from "./components/ui/DefaultState";
+import CreateTaskForm from "./components/task/CreateTaskForm";
+import EditTaskForm from "./components/task/EditTaskForm";
+import { MotionBox } from "./components/motion components/motion";
 
-type Pages = "default" | "filter" | "create" | "edit";
+type Pages = "default" | "filter";
 function App() {
   const [mobileTray, setMobileTray] = useState(false);
   const [page, setPage] = useState<Pages>("default");
@@ -14,10 +17,15 @@ function App() {
     if (page === "default") {
       return <DefaultState />;
     }
+
     return <></>;
   };
+
+  const changePage = (page: Pages) => {
+    setPage(page);
+  };
   return (
-    <div className="home">
+    <MotionBox className="home" sx={{}}>
       <button
         className={`tray-controller ${mobileTray && "no-show"}`}
         onClick={() => setMobileTray((p) => !p)}
@@ -25,9 +33,8 @@ function App() {
         <ListFilterPlus size={16} strokeWidth={1.75} />
       </button>
       <Sidebar mobileTray={mobileTray} />
-
       <Container children={renderPage()} />
-    </div>
+    </MotionBox>
   );
 }
 

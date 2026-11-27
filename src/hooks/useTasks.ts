@@ -6,7 +6,7 @@ import {
   type TaskInstance,
   type TaskStatus,
 } from "../lib/types";
-import { showTask, toDateKey } from "../lib/utils";
+import { getNextRuns, showTask, toDateKey } from "../lib/utils";
 import { useCallback, useEffect, useMemo, useReducer, useRef } from "react";
 import { TaskReducer } from "../lib/taskReducer";
 import {
@@ -64,7 +64,7 @@ export function useTasks() {
       state.records.map((r) => [instanceKey(r.taskId, r.date), r]),
     );
   }, [state.records]);
-
+  console.log(records);
   // create
   const createTask = useCallback((task: TaskInput): SaveReport => {
     const normalized = normalizeTaskInput(task); //normalize task input
@@ -166,6 +166,15 @@ export function useTasks() {
     [],
   );
 
+  const nextRuns = useCallback((date: DateKey, task?: Task) => {
+    if (!task) return [];
+    return getNextRuns(task, date);
+  }, []);
+
+  const getTask = useCallback(
+    (id: string) => state.tasks.find((t) => t.id === id),
+    [],
+  );
   return {
     tasks: state.tasks,
     records,
@@ -175,5 +184,7 @@ export function useTasks() {
     endSeries,
     setStatus,
     setInstanceStatus,
+    nextRuns,
+    getTask,
   };
 }

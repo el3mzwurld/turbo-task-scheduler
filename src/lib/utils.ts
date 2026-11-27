@@ -114,10 +114,7 @@ export const getInstances = (
   ); //sort by date
 };
 
-export const getNextRuns = (
-  task: Task,
-  taskRecords: Map<string, InstanceRecord>,
-): Partial<Task>[] => {
+export const getNextRuns = (task: Task, date: DateKey): Partial<Task>[] => {
   /**
    * the aim of this helper is to check for and return the next few possible runs of a specific task
    * Flow :
@@ -133,34 +130,16 @@ export const getNextRuns = (
   // draft and repeat check
   if (task.status === "draft" || task.repeat === "once") return [];
   // get task id
-  const id = task.id;
 
-  // task repeat type isn't once....check records for where the date is greater than today
-  taskRecords.forEach((value) => {
-    const hasRun = id === value.taskId; //check each record and discern if they belong to that task
+  for (let i = 0; i < 5; i++) {
+    if (task.repeat === "daily")
+      nextRuns.push({ startDate: addDays(date, i), time: task.time });
 
-    if (!hasRun) return;
+    if (task.repeat === "weekly")
+      nextRuns.push({ startDate: addDays(date, 7 * i), time: task.time });
 
-    // handle edge case where task might be infinite...so just push a partial record into the nextRuns array
-    if (!task.endDate) {
-      if (fromDateKey(task.startDate) < fromDateKey(value.date)) {
-        const t: Partial<Task> = { startDate: value.date, time: task.time };
-        nextRuns.push(t);
-        return;
-      } else {
-        return;
-      }
-    }
-
-    // task has endDate...handle
-    if (
-      fromDateKey(task.startDate) < fromDateKey(value.date) &&
-      fromDateKey(task.endDate) > fromDateKey(value.date)
-    ) {
-      const t: Partial<Task> = { startDate: value.date, time: task.time };
-      nextRuns.push(t);
-      return;
-    }
-  });
+    if (task.repeat === "monthly")
+      nextRuns.push({ startDate: addDays(date, 28 * i), time: task.time });
+  }
   return nextRuns;
 };

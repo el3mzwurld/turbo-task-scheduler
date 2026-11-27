@@ -11,7 +11,7 @@ const TIME_REGEX = /^([01]\d|2[0-3]):[0-5]\d$/;
 
 const DATE_KEY_REGEX = /^\d{4}-\d{2}-\d{2}$/;
 
-const isValidDate = (key: DateKey): boolean => {
+export const isValidDate = (key: DateKey): boolean => {
   return DATE_KEY_REGEX.test(key) && toDateKey(fromDateKey(key)) === key;
 };
 
@@ -44,11 +44,11 @@ export const validateTask = (input: TaskInput): TaskErrors => {
 
   // reminder isn't null ? if yes...check if it's an integer and not less than 0
 
-  if (input.remindBefore !== null) {
-    if (!Number(input.remindBefore) || input.remindBefore < 0) {
-      errors.remindBefore = "Reminder must be zero (none) or more";
-    }
-  }
+  // if (input.remindBefore !== null) {
+  //   if (!Number(input.remindBefore) || input.remindBefore <= -1) {
+  //     errors.remindBefore = "Reminder must be zero (none) or more";
+  //   }
+  // }
 
   return errors;
 };
